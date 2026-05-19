@@ -12,9 +12,7 @@ function decodeUtf8(bytes) {
       str += String.fromCharCode(((b & 0x1f) << 6) | (bytes[i + 1] & 0x3f));
       i += 2;
     } else if ((b & 0xf0) === 0xe0) {
-      str += String.fromCharCode(
-        ((b & 0x0f) << 12) | ((bytes[i + 1] & 0x3f) << 6) | (bytes[i + 2] & 0x3f)
-      );
+      str += String.fromCharCode(((b & 0x0f) << 12) | ((bytes[i + 1] & 0x3f) << 6) | (bytes[i + 2] & 0x3f));
       i += 3;
     } else {
       i += 1;
@@ -39,7 +37,10 @@ function readText(path) {
 }
 
 export function readChapter(bookIndex, chapterIndex) {
-  const text = readText(`data/${bookIndex}/${chapterIndex}.txt`);
-  if (!text) return null;
-  return text.split("\n").filter((line) => line.length > 0);
+  const text =  readText(`data/${bookIndex}/${chapterIndex}.txt`);
+  if (!text) {
+    console.error(`[fs-helper] Chapter file not found: data/${bookIndex}/${chapterIndex}.txt`);
+    return null;
+  }
+  return text.split("\n").filter(line => line.trim() !== "");
 }

@@ -22,6 +22,18 @@ Page(
 
       // Header
       const headerY = LAYOUT.statusBarH + PADDING;
+      hmUI.createWidget(hmUI.widget.TEXT, {
+        x: LAYOUT.pad,
+        y: headerY,
+        w: LAYOUT.W - LAYOUT.pad * 2,
+        h: LAYOUT.headerH,
+        text: book.name,
+        color,
+        text_size: hmUI.sp(26),
+        align_h: hmUI.align.CENTER_H,
+        align_v: hmUI.align.CENTER_V,
+      });
+
       hmUI.createWidget(hmUI.widget.BUTTON, {
         x: LAYOUT.pad,
         y: headerY,
@@ -37,18 +49,6 @@ Page(
             url: "page/books/index",
           });
         },
-      });
-
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        x: LAYOUT.pad,
-        y: headerY,
-        w: LAYOUT.W - LAYOUT.pad * 2,
-        h: LAYOUT.headerH,
-        text: book.name,
-        color,
-        text_size: hmUI.sp(26),
-        align_h: hmUI.align.CENTER_H,
-        align_v: hmUI.align.CENTER_V,
       });
 
       // Chapter grid: 5 columns, rows separated by PADDING

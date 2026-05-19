@@ -6,6 +6,7 @@ import { readChapter } from "../../utils/fs-helper";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { vstack, PADDING } from "../../utils/vstack";
 import { COMMON_LAYOUT } from "../../utils/config/layout";
+import { px } from "@zos/utils";
 
 const { bgColor, pressColor, color, verseFontSize, navFontSize } = COMMON_LAYOUT;
 
@@ -117,7 +118,7 @@ function buildContent(verses, bookIndex, chapterIndex) {
       text_size: verseFontSize,
       text_width: textW,
     });
-    const y = stack.add(height);
+    const y = stack.add(height + PADDING * 2);
     hmUI.createWidget(hmUI.widget.TEXT, {
       x: LAYOUT.pad,
       y,
