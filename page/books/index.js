@@ -9,12 +9,8 @@ import { COMMON_LAYOUT, getListItemLayout } from "../../utils/config/layout";
 const OT = BOOKS.slice(0, NT_START);
 const NT = BOOKS.slice(NT_START);
 
-const { radius, bgColor, pressColor, textSize } = COMMON_LAYOUT;
+const { radius, bgColor, pressColor, textSize, color } = COMMON_LAYOUT;
 const { w, h } = getListItemLayout(LAYOUT);
-
-function getDataArray(isAT) {
-  return (isAT ? OT : NT).map((book) => ({ name: book.name }));
-}
 
 function buildTestamentTabs(onSelect) {
   const halfW = Math.floor(LAYOUT.W / 2);
@@ -37,43 +33,36 @@ function buildTestamentTabs(onSelect) {
   });
 }
 
-function buildListItemConfig() {
-  return {
-    type_id: 1,
-    item_height: COMMON_LAYOUT.textSize,
-    item_bg_radius: radius,
-    text_view: [
-      {
-        key: "name",
-        y: 0,
-        x: LAYOUT.pad,
-        w,
-        h: COMMON_LAYOUT.textSize,
-        text_size: textSize,
-        align_h: hmUI.align.LEFT,
-        align_v: hmUI.align.CENTER_V,
-      },
-    ],
-    text_view_count: 1,
-  };
-}
-
-function buildBookList(dataArray, onItemClick) {
+function buildBookList(books, onBookClick) {
   const listY = LAYOUT.statusBarH + h + LAYOUT.pad;
+  const itemStep = h + LAYOUT.pad;
+  const xOffset = Math.floor((LAYOUT.W - w) / 2);
 
-  return hmUI.createWidget(hmUI.widget.SCROLL_LIST, {
+  const container = hmUI.createWidget(hmUI.widget.VIEW_CONTAINER, {
     x: 0,
     y: listY,
     w: LAYOUT.W,
     h: DEVICE_HEIGHT - listY,
-    item_space: LAYOUT.pad,
-    enable_scroll_bar: true,
-    item_config: [buildListItemConfig()],
-    item_config_count: 1,
-    data_array: dataArray,
-    data_count: dataArray.length,
-    item_click_func: onItemClick,
+    scroll_enable: 1,
   });
+
+  books.forEach((book, i) => {
+    container.createWidget(hmUI.widget.BUTTON, {
+      x: 0,
+      y: i * itemStep,
+      w: LAYOUT.W,
+      h,
+      text: book.name,
+      text_size: textSize,
+      color,
+      normal_color: bgColor,
+      press_color: pressColor,
+      radius,
+      click_func: () => onBookClick(i),
+    });
+  });
+
+  return container;
 }
 
 Page(
@@ -84,13 +73,10 @@ Page(
 
     build() {
       buildTestamentTabs((t) => this.selectTestament(t));
-
-      const dataArray = getDataArray(true);
-      this.scrollList = buildBookList(dataArray, (list, index) => {
-        const offset = this.state.testament === "AT" ? 0 : NT_START;
+      this.container = buildBookList(OT, (i) => {
         push({
           url: "page/chapters/index",
-          params: JSON.stringify({ bookIndex: offset + index }),
+          params: JSON.stringify({ bookIndex: i }),
         });
       });
     },
@@ -98,11 +84,14 @@ Page(
     selectTestament(testament) {
       if (this.state.testament === testament) return;
       this.state.testament = testament;
-      const dataArray = getDataArray(testament === "AT");
-      this.scrollList.setProperty(hmUI.prop.UPDATE_DATA, {
-        data_array: dataArray,
-        data_count: dataArray.length,
-        on_page: 0,
+      hmUI.deleteWidget(this.container);
+      const books = testament === "AT" ? OT : NT;
+      const offset = testament === "AT" ? 0 : NT_START;
+      this.container = buildBookList(books, (i) => {
+        push({
+          url: "page/chapters/index",
+          params: JSON.stringify({ bookIndex: offset + i }),
+        });
       });
     },
   }),
