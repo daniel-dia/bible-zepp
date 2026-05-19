@@ -48,7 +48,7 @@ function buildListItemConfig() {
         y: 0,
         x: LAYOUT.pad,
         w,
-        h,
+        h: COMMON_LAYOUT.textSize,
         text_size: textSize,
         align_h: hmUI.align.LEFT,
         align_v: hmUI.align.CENTER_V,

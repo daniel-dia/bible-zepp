@@ -39,6 +39,7 @@ function buildLoading() {
     text: "Carregando...",
     color,
     text_size: verseFontSize,
+    font: 'fonts/Nunito-Light.ttf',
     align_h: hmUI.align.CENTER_H,
     align_v: hmUI.align.CENTER_V,
   });
@@ -118,7 +119,7 @@ function buildContent(verses, bookIndex, chapterIndex) {
       text_size: verseFontSize,
       text_width: textW,
     });
-    const y = stack.add(height + PADDING * 2);
+    const y = stack.add(height + PADDING );
     hmUI.createWidget(hmUI.widget.TEXT, {
       x: LAYOUT.pad,
       y,
@@ -127,6 +128,7 @@ function buildContent(verses, bookIndex, chapterIndex) {
       text: label,
       color,
       text_size: verseFontSize,
+      font: 'fonts/Nunito-Light.ttf',
       text_style: hmUI.text_style.WRAP,
       align_v: hmUI.align.TOP,
     });
