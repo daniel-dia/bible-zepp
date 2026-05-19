@@ -1,0 +1,24 @@
+{
+  "name": "biblia-nvi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "zeus dev",
+    "build": "zeus build",
+    "preview": "zeus preview",
+    "bridge": "zeus bridge",
+    "status": "zeus status",
+    "prune": "zeus prune",
+    "format": "prettier --write ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@zeppos/device-types": "^3.0.0",
+    "prettier": "^3.8.3"
+  },
+  "dependencies": {
+    "@zeppos/zml": "^0.0.38"
+  }
+}
