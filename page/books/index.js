@@ -13,13 +13,13 @@ const { radius, bgColor, pressColor, textSize, color } = COMMON_LAYOUT;
 const { w, h } = getListItemLayout(LAYOUT);
 
 function buildTestamentTabs(onSelect) {
-  const halfW = Math.floor(LAYOUT.W / 2);
+  const halfW = Math.floor(LAYOUT.W / 2 - LAYOUT.pad);
   const tabProps = { text_size: textSize, y: LAYOUT.statusBarH, h, normal_color: bgColor, press_color: pressColor, radius };
 
   hmUI.createWidget(hmUI.widget.BUTTON, {
     ...tabProps,
     text: "A. Testamento",
-    x: 0,
+    x: LAYOUT.pad,
     w: halfW,
     click_func: () => onSelect("AT"),
   });
@@ -27,8 +27,8 @@ function buildTestamentTabs(onSelect) {
   hmUI.createWidget(hmUI.widget.BUTTON, {
     ...tabProps,
     text: "N. Testamento",
-    x: halfW,
-    w: LAYOUT.W - halfW,
+    x: halfW + LAYOUT.pad,
+    w: LAYOUT.W - halfW - LAYOUT.pad * 2,
     click_func: () => onSelect("NT"),
   });
 }
@@ -48,9 +48,9 @@ function buildBookList(books, onBookClick) {
 
   books.forEach((book, i) => {
     container.createWidget(hmUI.widget.BUTTON, {
-      x: 0,
+      x: xOffset,
       y: i * itemStep,
-      w: LAYOUT.W,
+      w,
       h,
       text: book.name,
       text_size: textSize,
@@ -62,7 +62,9 @@ function buildBookList(books, onBookClick) {
     });
   });
 
-  return container;
+  const scrollBar = hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR, { target: container });
+
+  return { container, scrollBar };
 }
 
 Page(
@@ -73,26 +75,31 @@ Page(
 
     build() {
       buildTestamentTabs((t) => this.selectTestament(t));
-      this.container = buildBookList(OT, (i) => {
+      const list = buildBookList(OT, (i) => {
         push({
           url: "page/chapters/index",
           params: JSON.stringify({ bookIndex: i }),
         });
       });
+      this.container = list.container;
+      this.scrollBar = list.scrollBar;
     },
 
     selectTestament(testament) {
       if (this.state.testament === testament) return;
       this.state.testament = testament;
       hmUI.deleteWidget(this.container);
+      hmUI.deleteWidget(this.scrollBar);
       const books = testament === "AT" ? OT : NT;
       const offset = testament === "AT" ? 0 : NT_START;
-      this.container = buildBookList(books, (i) => {
+      const list = buildBookList(books, (i) => {
         push({
           url: "page/chapters/index",
           params: JSON.stringify({ bookIndex: offset + i }),
         });
       });
+      this.container = list.container;
+      this.scrollBar = list.scrollBar;
     },
   }),
 );
