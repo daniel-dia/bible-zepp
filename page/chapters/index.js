@@ -1,5 +1,5 @@
 import * as hmUI from "@zos/ui";
-import { push, replace } from "@zos/router";
+import { push } from "@zos/router";
 import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS } from "../../utils/bible-meta";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
@@ -13,7 +13,8 @@ Page(
     state: { bookIndex: 0 },
 
     onInit(params) {
-      this.state.bookIndex = params.bookIndex || 0;
+      const parsed = JSON.parse(params);
+      this.state.bookIndex = parsed.bookIndex || 0;
     },
 
     build() {
@@ -32,23 +33,6 @@ Page(
         text_size: hmUI.sp(26),
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
-      });
-
-      hmUI.createWidget(hmUI.widget.BUTTON, {
-        x: LAYOUT.pad,
-        y: headerY,
-        w: Math.floor(LAYOUT.W * 0.35),
-        h: LAYOUT.headerH,
-        text: "← Livros",
-        text_size: hmUI.sp(18),
-        normal_color: bgColor,
-        press_color: pressColor,
-        radius: PADDING,
-        click_func: () => {
-          replace({
-            url: "page/books/index",
-          });
-        },
       });
 
       // Chapter grid: 5 columns, rows separated by PADDING
