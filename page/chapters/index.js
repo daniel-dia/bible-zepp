@@ -1,5 +1,5 @@
 import * as hmUI from "@zos/ui";
-import { push } from "@zos/router";
+import { push, replace } from "@zos/router";
 import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS } from "../../utils/bible-meta";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
