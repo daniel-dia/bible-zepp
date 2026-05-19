@@ -40,7 +40,7 @@ function buildTestamentTabs(onSelect) {
 function buildListItemConfig() {
   return {
     type_id: 1,
-    item_height: h,
+    item_height: COMMON_LAYOUT.textSize,
     item_bg_radius: radius,
     text_view: [
       {

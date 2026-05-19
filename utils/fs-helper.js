@@ -1,4 +1,4 @@
-import { openAssetsSync, readSync, statAssetsSync, O_RDONLY, closeSync } from "@zos/fs";
+import { openAssetsSync, readSync, O_RDONLY, closeSync } from "@zos/fs";
 
 function decodeUtf8(bytes) {
   let str = "";
@@ -21,34 +21,16 @@ function decodeUtf8(bytes) {
   return str;
 }
 
-function readText(path) {
-  try {
-    const stat = statAssetsSync({ path });
-    console.log(`[fs-helper] stat("${path}"):`, JSON.stringify(stat));
-    if (!stat || !stat.size) return null;
-    const fd = openAssetsSync({ path, flag: O_RDONLY });
-    console.log(`[fs-helper] fd:`, fd);
-    const buf = new ArrayBuffer(stat.size);
-    readSync({ fd, buffer: buf, options: { length: stat.size, offset: 0 } });
-    closeSync({ fd });
-    const text = decodeUtf8(new Uint8Array(buf));
-    console.log(`[fs-helper] read ${text.length} chars, preview: "${text.slice(0, 40)}"`);
-    return text;
-  } catch (e) {
-    console.error(`[fs-helper] Error reading "${path}":`, e && e.message ? e.message : e);
-    return null;
-  }
-}
-
 export function readChapter(bookIndex, chapterIndex) {
-  const path = `data/${bookIndex}/${chapterIndex}.txt`;
-  console.log(`[fs-helper] readChapter(${bookIndex}, ${chapterIndex}) -> "${path}"`);
-  const text = readText(path);
-  if (!text) {
-    console.error(`[fs-helper] Chapter file not found: ${path}`);
+  try {
+    const path = `data/${bookIndex}/${chapterIndex}.txt`;
+    const fd = openAssetsSync({ path, flag: O_RDONLY });
+    const buf = new ArrayBuffer(32768);
+    const bytesRead = readSync({ fd, buffer: buf });
+    closeSync({ fd });
+    return decodeUtf8(new Uint8Array(buf, 0, bytesRead)).split("\n").filter(l => l.trim() !== "");
+  } catch (e) {
+    console.error(`[fs-helper] readChapter(${bookIndex}, ${chapterIndex}):`, e && e.message ? e.message : e);
     return null;
   }
-  const verses = text.split("\n").filter(line => line.trim() !== "");
-  console.log(`[fs-helper] parsed ${verses.length} verses`);
-  return verses;
 }
