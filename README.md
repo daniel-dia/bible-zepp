@@ -36,7 +36,7 @@
         <sub><b>Lista de livros</b></sub>
       </td>
       <td align="center">
-        <img src="screenshots/zepp_screenshot_1779287284383.png" width="180" alt="Capítulos" /><br/>
+        <img src="screenshots/zepp_screenshot_1779287264515b.png" width="180" alt="Capítulos" /><br/>
         <sub><b>Capítulos</b></sub>
       </td>
       <td align="center">
