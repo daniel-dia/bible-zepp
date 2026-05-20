@@ -1,4 +1,5 @@
 import * as hmUI from "@zos/ui";
+import { px } from "@zos/utils";
 import { push } from "@zos/router";
 import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS, NT_START } from "../../utils/bible-meta";
@@ -71,12 +72,15 @@ Page(
 
       if (bookmark) {
         const book = BOOKS[bookmark.bookIndex];
+        const btnX = Math.floor((LAYOUT.W - w) / 2);
+        const btnY = LAYOUT.statusBarH;
+
         hmUI.createWidget(hmUI.widget.BUTTON, {
-          x: Math.floor((LAYOUT.W - w) / 2),
-          y: LAYOUT.statusBarH,
+          x: btnX,
+          y: btnY,
           w,
           h,
-          text: `🔖 ${book.name} ${bookmark.chapterIndex + 1}`,
+          text: `${book.name} ${bookmark.chapterIndex + 1}`,
           text_size: textSize,
           color,
           normal_color: bgColor,
@@ -88,16 +92,21 @@ Page(
               params: JSON.stringify({ bookIndex: bookmark.bookIndex, chapterIndex: bookmark.chapterIndex }),
             }),
         });
+
+        const imgW = px(26);
+        const imgH = px(38);
+        hmUI.createWidget(hmUI.widget.IMG, {
+          x: Math.floor(LAYOUT.W * 0.75),
+          y: btnY - px(6),
+          w: imgW,
+          h: imgH,
+          src: "bookmark.png",
+        });
       }
 
       buildTestamentTabs((t) => this.selectTestament(t), tabsY);
 
-      this.bookBtns = buildBookButtons(
-        OT,
-        (i) => push({ url: "page/chapters/index", params: JSON.stringify({ bookIndex: i }) }),
-        this.listStartY,
-        0,
-      );
+      this.bookBtns = buildBookButtons(OT, (i) => push({ url: "page/chapters/index", params: JSON.stringify({ bookIndex: i }) }), this.listStartY, 0);
 
       hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR);
     },
@@ -108,12 +117,7 @@ Page(
       this.bookBtns.forEach((btn) => hmUI.deleteWidget(btn));
       const books = testament === "AT" ? OT : NT;
       const offset = testament === "AT" ? 0 : NT_START;
-      this.bookBtns = buildBookButtons(
-        books,
-        (i) => push({ url: "page/chapters/index", params: JSON.stringify({ bookIndex: offset + i }) }),
-        this.listStartY,
-        offset,
-      );
+      this.bookBtns = buildBookButtons(books, (i) => push({ url: "page/chapters/index", params: JSON.stringify({ bookIndex: offset + i }) }), this.listStartY, offset);
     },
   }),
 );
