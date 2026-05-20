@@ -5,6 +5,7 @@ import { BOOKS, NT_START } from "../../utils/bible-meta";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { DEVICE_HEIGHT } from "../../utils/config/device";
 import { COMMON_LAYOUT, getListItemLayout } from "../../utils/config/layout";
+import { loadBookmark } from "../../utils/bookmark";
 
 const OT = BOOKS.slice(0, NT_START);
 const NT = BOOKS.slice(NT_START);
@@ -12,9 +13,9 @@ const NT = BOOKS.slice(NT_START);
 const { radius, bgColor, pressColor, textSize, color } = COMMON_LAYOUT;
 const { w, h } = getListItemLayout(LAYOUT);
 
-function buildTestamentTabs(onSelect) {
+function buildTestamentTabs(onSelect, tabsY) {
   const halfW = Math.floor(LAYOUT.W / 2 - LAYOUT.pad);
-  const tabProps = { text_size: textSize, y: LAYOUT.statusBarH, h, normal_color: bgColor, press_color: pressColor, radius };
+  const tabProps = { text_size: textSize, y: tabsY, h, normal_color: bgColor, press_color: pressColor, radius };
 
   hmUI.createWidget(hmUI.widget.BUTTON, {
     ...tabProps,
@@ -33,8 +34,7 @@ function buildTestamentTabs(onSelect) {
   });
 }
 
-function buildBookList(books, onBookClick) {
-  const listY = LAYOUT.statusBarH + h + LAYOUT.pad;
+function buildBookList(books, onBookClick, listY) {
   const itemStep = h + LAYOUT.pad;
   const xOffset = Math.floor((LAYOUT.W - w) / 2);
 
@@ -74,13 +74,39 @@ Page(
     },
 
     build() {
-      buildTestamentTabs((t) => this.selectTestament(t));
+      const bookmark = loadBookmark();
+      const bookmarkOffset = bookmark ? h + LAYOUT.pad : 0;
+      const tabsY = LAYOUT.statusBarH + bookmarkOffset;
+      this.listStartY = tabsY + h + LAYOUT.pad;
+
+      if (bookmark) {
+        const book = BOOKS[bookmark.bookIndex];
+        hmUI.createWidget(hmUI.widget.BUTTON, {
+          x: Math.floor((LAYOUT.W - w) / 2),
+          y: LAYOUT.statusBarH,
+          w,
+          h,
+          text: `▶ ${book.name} ${bookmark.chapterIndex + 1}`,
+          text_size: textSize,
+          color,
+          normal_color: bgColor,
+          press_color: pressColor,
+          radius,
+          click_func: () =>
+            push({
+              url: "page/reading/index",
+              params: JSON.stringify({ bookIndex: bookmark.bookIndex, chapterIndex: bookmark.chapterIndex }),
+            }),
+        });
+      }
+
+      buildTestamentTabs((t) => this.selectTestament(t), tabsY);
       const list = buildBookList(OT, (i) => {
         push({
           url: "page/chapters/index",
           params: JSON.stringify({ bookIndex: i }),
         });
-      });
+      }, this.listStartY);
       this.container = list.container;
       this.scrollBar = list.scrollBar;
     },
@@ -97,7 +123,7 @@ Page(
           url: "page/chapters/index",
           params: JSON.stringify({ bookIndex: offset + i }),
         });
-      });
+      }, this.listStartY);
       this.container = list.container;
       this.scrollBar = list.scrollBar;
     },

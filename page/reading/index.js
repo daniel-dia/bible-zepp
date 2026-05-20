@@ -3,6 +3,7 @@ import { replace } from "@zos/router";
 import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS } from "../../utils/bible-meta";
 import { readChapter } from "../../utils/fs-helper";
+import { saveBookmark } from "../../utils/bookmark";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { vstack, PADDING } from "../../utils/vstack";
 import { COMMON_LAYOUT } from "../../utils/config/layout";
@@ -148,6 +149,7 @@ Page(
       const p = typeof params === "string" ? JSON.parse(params || "{}") : (params ?? {});
       this.state.bookIndex = p.bookIndex || 0;
       this.state.chapterIndex = p.chapterIndex || 0;
+      saveBookmark(this.state.bookIndex, this.state.chapterIndex);
     },
 
     build() {
