@@ -76,7 +76,7 @@ Page(
           y: LAYOUT.statusBarH,
           w,
           h,
-          text: `Continuar · ${book.name} ${bookmark.chapterIndex + 1}`,
+          text: `🔖 ${book.name} ${bookmark.chapterIndex + 1}`,
           text_size: textSize,
           color,
           normal_color: bgColor,

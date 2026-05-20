@@ -8,21 +8,25 @@
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 | Recurso | Detalhe |
 |---|---|
-| 📚 **Lista de livros** | Navegue pelo Antigo e Novo Testamento com abas separadas |
-| 📑 **Capítulos** | Veja todos os capítulos do livro selecionado |
-| 📝 **Leitura** | Versículos renderizados com rolagem nativa |
-| 🔖 **Marcador** | Retome de onde parou com um toque |
-| ✅ **Progresso** | Rastreamento de capítulos lidos por livro (com indicador `✓`) |
-| ⚙️ **Configurações** | Tamanho da fonte, cor do texto e família tipográfica |
-| 🗂️ **Opções do livro** | Marque todos os capítulos como lidos/não lidos ou redefina o progresso |
+| **Lista de livros** | Navegue pelo Antigo e Novo Testamento com abas separadas |
+| **Capítulos** | Veja todos os capítulos do livro selecionado |
+| **Leitura** | Versículos renderizados com rolagem nativa |
+| **Marcador** | Retome de onde parou com um toque |
+| **Progresso** | Rastreamento de capítulos lidos por livro (com indicador `✓`) |
+| **Configurações** | Tamanho da fonte, cor do texto e família tipográfica |
+| **Opções do livro** | Marque todos os capítulos como lidos/não lidos ou redefina o progresso |
 
 ---
 
-## 📸 Screenshots
+## Screenshots
+
+<div align="center">
+  <img src="screenshots/Captura%20de%20tela%202026-05-20%20113535.png" alt="Bible NVI no pulso" width="600" />
+</div>
 
 <div align="center">
   <table>
@@ -49,7 +53,7 @@
 
 ---
 
-## 🗺️ Páginas
+## Páginas
 
 ### Livros (`page/books`)
 - Abas **A.T.** / **N.T.** para alternar entre os testamentos
@@ -79,7 +83,7 @@
 
 ---
 
-## 🛠️ Stack
+## Stack
 
 - **Zepp OS SDK** — API nativa de UI e armazenamento local
 - **ZML** (`@zeppos/zml`) — Camada base de `App` e `Page`
@@ -88,7 +92,7 @@
 
 ---
 
-## 🚀 Como rodar
+## Como rodar
 
 ```bash
 # Instalar dependências
@@ -108,7 +112,7 @@ npm run bridge
 
 ---
 
-## 📂 Estrutura
+## Estrutura
 
 ```
 bible-zepp/
@@ -136,7 +140,7 @@ bible-zepp/
 
 ---
 
-## ⌚ Dispositivos suportados
+## Dispositivos suportados
 
 | Perfil | Largura |
 |---|---|
@@ -147,13 +151,13 @@ O layout é ajustado automaticamente via `zosLoader` com arquivos `.r.layout.js`
 
 ---
 
-## 🌐 Idiomas
+## Idiomas
 
 - `pt-BR` — Português (padrão)
 - `en-US` — Inglês
 
 ---
 
-## 📜 Licença
+## Licença
 
 ISC
