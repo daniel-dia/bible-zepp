@@ -6,6 +6,7 @@ import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { DEVICE_HEIGHT } from "../../utils/config/device";
 import { COMMON_LAYOUT, getListItemLayout } from "../../utils/config/layout";
 import { loadBookmark } from "../../utils/bookmark";
+import { getBookProgress } from "../../utils/progress";
 
 const OT = BOOKS.slice(0, NT_START);
 const NT = BOOKS.slice(NT_START);
@@ -34,7 +35,7 @@ function buildTestamentTabs(onSelect, tabsY) {
   });
 }
 
-function buildBookList(books, onBookClick, listY) {
+function buildBookList(books, onBookClick, listY, bookIndexOffset) {
   const itemStep = h + LAYOUT.pad;
   const xOffset = Math.floor((LAYOUT.W - w) / 2);
 
@@ -47,12 +48,15 @@ function buildBookList(books, onBookClick, listY) {
   });
 
   books.forEach((book, i) => {
+    const globalIndex = bookIndexOffset + i;
+    const { percent } = getBookProgress(globalIndex, book.chapters);
+    const label = percent > 0 ? `${book.name}  ${percent}%` : book.name;
     container.createWidget(hmUI.widget.BUTTON, {
       x: xOffset,
       y: i * itemStep,
       w,
       h,
-      text: book.name,
+      text: label,
       text_size: textSize,
       color,
       normal_color: bgColor,
@@ -106,7 +110,7 @@ Page(
           url: "page/chapters/index",
           params: JSON.stringify({ bookIndex: i }),
         });
-      }, this.listStartY);
+      }, this.listStartY, 0);
       this.container = list.container;
       this.scrollBar = list.scrollBar;
     },
@@ -123,7 +127,7 @@ Page(
           url: "page/chapters/index",
           params: JSON.stringify({ bookIndex: offset + i }),
         });
-      }, this.listStartY);
+      }, this.listStartY, offset);
       this.container = list.container;
       this.scrollBar = list.scrollBar;
     },

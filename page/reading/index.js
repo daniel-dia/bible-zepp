@@ -4,6 +4,7 @@ import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS } from "../../utils/bible-meta";
 import { readChapter } from "../../utils/fs-helper";
 import { saveBookmark } from "../../utils/bookmark";
+import { markChapterRead } from "../../utils/progress";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { vstack, PADDING } from "../../utils/vstack";
 import { COMMON_LAYOUT } from "../../utils/config/layout";
@@ -150,6 +151,7 @@ Page(
       this.state.bookIndex = p.bookIndex || 0;
       this.state.chapterIndex = p.chapterIndex || 0;
       saveBookmark(this.state.bookIndex, this.state.chapterIndex);
+      markChapterRead(this.state.bookIndex, this.state.chapterIndex);
     },
 
     build() {
