@@ -5,11 +5,11 @@ import { BOOKS } from "../../utils/bible-meta";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { PADDING } from "../../utils/vstack";
 import { COMMON_LAYOUT } from "../../utils/config/layout";
-import { isChapterRead, markAllRead, markAllUnread } from "../../utils/progress";
+import { isChapterRead } from "../../utils/progress";
 
 const { bgColor, pressColor, color } = COMMON_LAYOUT;
 const READ_COLOR = 0x1b5e20;
-const ACTION_BTN_H = LAYOUT.btnH - PADDING * 2;
+const ICON_W = LAYOUT.btnH;
 
 Page(
   BasePage({
@@ -33,56 +33,41 @@ Page(
       const book = BOOKS[bookIndex];
 
       const headerY = LAYOUT.statusBarH + PADDING;
+
       hmUI.createWidget(hmUI.widget.TEXT, {
         x: LAYOUT.pad,
         y: headerY,
-        w: LAYOUT.W - LAYOUT.pad * 2,
+        w: LAYOUT.W - LAYOUT.pad - ICON_W - PADDING,
         h: LAYOUT.headerH,
         text: book.name,
         color,
         text_size: hmUI.sp(26),
-        align_h: hmUI.align.CENTER_H,
+        align_h: hmUI.align.LEFT,
         align_v: hmUI.align.CENTER_V,
       });
 
-      // Action buttons: mark all read / mark all unread
-      const actionY = headerY + LAYOUT.headerH + PADDING;
-      const halfW = Math.floor((LAYOUT.W - LAYOUT.pad * 3) / 2);
       hmUI.createWidget(hmUI.widget.BUTTON, {
-        x: LAYOUT.pad,
-        y: actionY,
-        w: halfW,
-        h: ACTION_BTN_H,
-        text: "✓ Todos",
-        text_size: hmUI.sp(18),
-        normal_color: READ_COLOR,
-        press_color: pressColor,
-        radius: PADDING,
-        click_func: () => {
-          markAllRead(bookIndex, book.chapters);
-          this._refreshChapterColors();
-        },
-      });
-      hmUI.createWidget(hmUI.widget.BUTTON, {
-        x: LAYOUT.pad * 2 + halfW,
-        y: actionY,
-        w: halfW,
-        h: ACTION_BTN_H,
-        text: "✗ Resetar",
-        text_size: hmUI.sp(18),
+        x: LAYOUT.W - ICON_W,
+        y: headerY,
+        w: ICON_W,
+        h: LAYOUT.headerH,
+        text: "⚙",
+        text_size: hmUI.sp(22),
+        color,
         normal_color: bgColor,
         press_color: pressColor,
         radius: PADDING,
-        click_func: () => {
-          markAllUnread(bookIndex);
-          this._refreshChapterColors();
-        },
+        click_func: () =>
+          push({
+            url: "page/options/index",
+            params: JSON.stringify({ bookIndex }),
+          }),
       });
 
       // Chapter grid
       const cols = LAYOUT.cols;
       const btnW = Math.floor(LAYOUT.W / cols);
-      const gridStartY = actionY + ACTION_BTN_H + PADDING;
+      const gridStartY = headerY + LAYOUT.headerH + PADDING;
 
       this.chapterBtns = [];
       for (let i = 0; i < book.chapters; i++) {

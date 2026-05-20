@@ -3,8 +3,8 @@ import { push } from "@zos/router";
 import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS, NT_START } from "../../utils/bible-meta";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
-import { DEVICE_HEIGHT } from "../../utils/config/device";
 import { COMMON_LAYOUT, getListItemLayout } from "../../utils/config/layout";
+import { PADDING } from "../../utils/vstack";
 import { loadBookmark } from "../../utils/bookmark";
 import { getBookProgress } from "../../utils/progress";
 
@@ -15,45 +15,37 @@ const { radius, bgColor, pressColor, textSize, color } = COMMON_LAYOUT;
 const { w, h } = getListItemLayout(LAYOUT);
 
 function buildTestamentTabs(onSelect, tabsY) {
-  const halfW = Math.floor(LAYOUT.W / 2 - LAYOUT.pad);
+  const tabW = Math.floor((LAYOUT.W - LAYOUT.pad * 2 - PADDING) / 2);
   const tabProps = { text_size: textSize, y: tabsY, h, normal_color: bgColor, press_color: pressColor, radius };
 
   hmUI.createWidget(hmUI.widget.BUTTON, {
     ...tabProps,
-    text: "A. Testamento",
+    text: "A.T.",
     x: LAYOUT.pad,
-    w: halfW,
+    w: tabW,
     click_func: () => onSelect("AT"),
   });
 
   hmUI.createWidget(hmUI.widget.BUTTON, {
     ...tabProps,
-    text: "N. Testamento",
-    x: halfW + LAYOUT.pad,
-    w: LAYOUT.W - halfW - LAYOUT.pad * 2,
+    text: "N.T.",
+    x: LAYOUT.pad + tabW + PADDING,
+    w: tabW,
     click_func: () => onSelect("NT"),
   });
 }
 
-function buildBookList(books, onBookClick, listY, bookIndexOffset) {
+function buildBookButtons(books, onBookClick, startY, bookIndexOffset) {
   const itemStep = h + LAYOUT.pad;
   const xOffset = Math.floor((LAYOUT.W - w) / 2);
 
-  const container = hmUI.createWidget(hmUI.widget.VIEW_CONTAINER, {
-    x: 0,
-    y: listY,
-    w: LAYOUT.W,
-    h: DEVICE_HEIGHT - listY,
-    scroll_enable: 1,
-  });
-
-  books.forEach((book, i) => {
+  return books.map((book, i) => {
     const globalIndex = bookIndexOffset + i;
     const { percent } = getBookProgress(globalIndex, book.chapters);
-    const label = percent > 0 ? `${book.name}  ${percent}%` : book.name;
-    container.createWidget(hmUI.widget.BUTTON, {
+    const label = percent === 100 ? `${book.name}  ✓` : book.name;
+    return hmUI.createWidget(hmUI.widget.BUTTON, {
       x: xOffset,
-      y: i * itemStep,
+      y: startY + i * itemStep,
       w,
       h,
       text: label,
@@ -65,17 +57,11 @@ function buildBookList(books, onBookClick, listY, bookIndexOffset) {
       click_func: () => onBookClick(i),
     });
   });
-
-  const scrollBar = hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR, { target: container });
-
-  return { container, scrollBar };
 }
 
 Page(
   BasePage({
-    state: {
-      testament: "AT",
-    },
+    state: { testament: "AT" },
 
     build() {
       const bookmark = loadBookmark();
@@ -90,7 +76,7 @@ Page(
           y: LAYOUT.statusBarH,
           w,
           h,
-          text: `▶ ${book.name} ${bookmark.chapterIndex + 1}`,
+          text: `Continuar · ${book.name} ${bookmark.chapterIndex + 1}`,
           text_size: textSize,
           color,
           normal_color: bgColor,
@@ -105,31 +91,29 @@ Page(
       }
 
       buildTestamentTabs((t) => this.selectTestament(t), tabsY);
-      const list = buildBookList(OT, (i) => {
-        push({
-          url: "page/chapters/index",
-          params: JSON.stringify({ bookIndex: i }),
-        });
-      }, this.listStartY, 0);
-      this.container = list.container;
-      this.scrollBar = list.scrollBar;
+
+      this.bookBtns = buildBookButtons(
+        OT,
+        (i) => push({ url: "page/chapters/index", params: JSON.stringify({ bookIndex: i }) }),
+        this.listStartY,
+        0,
+      );
+
+      hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR);
     },
 
     selectTestament(testament) {
       if (this.state.testament === testament) return;
       this.state.testament = testament;
-      hmUI.deleteWidget(this.container);
-      hmUI.deleteWidget(this.scrollBar);
+      this.bookBtns.forEach((btn) => hmUI.deleteWidget(btn));
       const books = testament === "AT" ? OT : NT;
       const offset = testament === "AT" ? 0 : NT_START;
-      const list = buildBookList(books, (i) => {
-        push({
-          url: "page/chapters/index",
-          params: JSON.stringify({ bookIndex: offset + i }),
-        });
-      }, this.listStartY, offset);
-      this.container = list.container;
-      this.scrollBar = list.scrollBar;
+      this.bookBtns = buildBookButtons(
+        books,
+        (i) => push({ url: "page/chapters/index", params: JSON.stringify({ bookIndex: offset + i }) }),
+        this.listStartY,
+        offset,
+      );
     },
   }),
 );

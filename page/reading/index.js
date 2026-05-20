@@ -1,16 +1,16 @@
 import * as hmUI from "@zos/ui";
-import { replace } from "@zos/router";
+import { replace, push } from "@zos/router";
 import { BasePage } from "@zeppos/zml/base-page";
 import { BOOKS } from "../../utils/bible-meta";
 import { readChapter } from "../../utils/fs-helper";
 import { saveBookmark } from "../../utils/bookmark";
 import { markChapterRead } from "../../utils/progress";
+import { loadSettings, FONT_SIZES, TEXT_COLORS, FONTS } from "../../utils/settings";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { vstack, PADDING } from "../../utils/vstack";
 import { COMMON_LAYOUT } from "../../utils/config/layout";
-import { px } from "@zos/utils";
 
-const { bgColor, pressColor, color, verseFontSize, navFontSize } = COMMON_LAYOUT;
+const { bgColor, pressColor, verseFontSize, navFontSize } = COMMON_LAYOUT;
 
 function buildChapterRoute(bookIndex, chapterIndex) {
   return {
@@ -19,29 +19,44 @@ function buildChapterRoute(bookIndex, chapterIndex) {
   };
 }
 
+const ICON_W = PADDING * 8;
+
 function buildHeader(bookName, chapterIndex) {
   hmUI.createWidget(hmUI.widget.TEXT, {
     x: 0,
     y: 0,
-    w: LAYOUT.W,
+    w: LAYOUT.W - ICON_W,
     h: LAYOUT.headerH,
     text: `${bookName} ${chapterIndex + 1}`,
     text_size: hmUI.sp(26),
     align_h: hmUI.align.CENTER_H,
     align_v: hmUI.align.CENTER_V,
   });
+
+  hmUI.createWidget(hmUI.widget.BUTTON, {
+    x: LAYOUT.W - ICON_W,
+    y: 0,
+    w: ICON_W,
+    h: LAYOUT.headerH,
+    text: "⚙",
+    text_size: hmUI.sp(20),
+    normal_color: 0x222222,
+    press_color: bgColor,
+    radius: PADDING,
+    click_func: () => push({ url: "page/settings/index" }),
+  });
 }
 
-function buildLoading() {
+function buildLoading(style) {
   return hmUI.createWidget(hmUI.widget.TEXT, {
     x: 0,
     y: LAYOUT.headerH,
     w: LAYOUT.W,
     h: PADDING * 6,
     text: "Carregando...",
-    color,
-    text_size: verseFontSize,
-    font: 'fonts/Nunito-Light.ttf',
+    color: style.color,
+    text_size: style.fontSize,
+    ...(style.font ? { font: style.font } : {}),
     align_h: hmUI.align.CENTER_H,
     align_v: hmUI.align.CENTER_V,
   });
@@ -54,7 +69,7 @@ function buildError() {
     w: LAYOUT.W - PADDING * 2,
     h: PADDING * 5,
     text: "Erro ao carregar o capítulo.",
-    color,
+    color: COMMON_LAYOUT.color,
     text_size: verseFontSize,
     align_h: hmUI.align.CENTER_H,
     text_style: hmUI.text_style.WRAP,
@@ -111,26 +126,26 @@ function buildNavButtons(chapterIndex, chaptersLength, bookIndex, startY) {
   }
 }
 
-function buildContent(verses, bookIndex, chapterIndex) {
+function buildContent(verses, bookIndex, chapterIndex, style) {
   const textW = LAYOUT.W - LAYOUT.pad * 2;
+  const fontProp = style.font ? { font: style.font } : {};
   const stack = vstack(LAYOUT.headerH + PADDING, PADDING);
 
   verses.forEach((verse) => {
-    const label = verse;
-    const { height } = hmUI.getTextLayout(label, {
-      text_size: verseFontSize,
+    const { height } = hmUI.getTextLayout(verse, {
+      text_size: style.fontSize,
       text_width: textW,
     });
-    const y = stack.add(height + PADDING );
+    const y = stack.add(height + PADDING);
     hmUI.createWidget(hmUI.widget.TEXT, {
       x: LAYOUT.pad,
       y,
       w: textW,
       h: height,
-      text: label,
-      color,
-      text_size: verseFontSize,
-      font: 'fonts/Nunito-Light.ttf',
+      text: verse,
+      color: style.color,
+      text_size: style.fontSize,
+      ...fontProp,
       text_style: hmUI.text_style.WRAP,
       align_v: hmUI.align.TOP,
     });
@@ -158,8 +173,15 @@ Page(
       hmUI.setStatusBarVisible(false);
       const { bookIndex, chapterIndex } = this.state;
 
+      const cfg = loadSettings();
+      const style = {
+        fontSize: FONT_SIZES[cfg.fontSizeIndex],
+        color: TEXT_COLORS[cfg.colorIndex],
+        font: FONTS[cfg.fontIndex],
+      };
+
       buildHeader(BOOKS[bookIndex].name, chapterIndex);
-      const loading = buildLoading();
+      const loading = buildLoading(style);
 
       setTimeout(() => {
         hmUI.deleteWidget(loading);
@@ -170,7 +192,7 @@ Page(
           return;
         }
 
-        buildContent(verses, bookIndex, chapterIndex);
+        buildContent(verses, bookIndex, chapterIndex, style);
       }, 50);
     },
   }),

@@ -12,7 +12,7 @@
     "vender": "zepp",
     "description": "Bíblia Nova Versão Internacional"
   },
-  "permissions": ["data:os.device.info"],
+  "permissions": ["data:os.device.info", "device:os.local_storage"],
   "runtime": {
     "apiVersion": {
       "compatible": "4.0",
@@ -24,7 +24,7 @@
     "common": {
       "module": {
         "page": {
-          "pages": ["page/books/index", "page/chapters/index", "page/reading/index"]
+          "pages": ["page/books/index", "page/chapters/index", "page/reading/index", "page/settings/index", "page/options/index"]
         },
         "app-side": {
           "path": "app-side/index"
