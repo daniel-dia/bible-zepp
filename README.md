@@ -1,10 +1,8 @@
-<div align="center">
-  <img src="assets/common.r/icon.png" alt="Ícone Bíblia NVI" width="120" />
+![Ícone Bíblia NVI](assets/common.r/icon.png)
 
-  # Bíblia NVI para Zepp OS
+# Bíblia NVI para Zepp OS
 
-  > A Bíblia Nova Versão Internacional direto no seu pulso — leve, rápida e com progresso de leitura.
-</div>
+> A Bíblia Nova Versão Internacional direto no seu pulso — leve, rápida e com progresso de leitura.
 
 ---
 
@@ -20,36 +18,17 @@
 | **Configurações** | Tamanho da fonte, cor do texto e família tipográfica |
 | **Opções do livro** | Marque todos os capítulos como lidos/não lidos ou redefina o progresso |
 
+![Bible NVI no pulso](screenshots/Captura%20de%20tela%202026-05-20%20113535.png)
+
+
 ---
 
 ## Screenshots
 
-<div align="center">
-  <img src="screenshots/Captura%20de%20tela%202026-05-20%20113535.png" alt="Bible NVI no pulso" width="600" />
-</div>
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center">
-        <img src="screenshots/zepp_screenshot_1779287264515b.png" width="180" alt="Lista de livros" /><br/>
-        <sub><b>Lista de livros</b></sub>
-      </td>
-      <td align="center">
-        <img src="screenshots/zepp_screenshot_1779287284383.png" width="180" alt="Capítulos" /><br/>
-        <sub><b>Capítulos</b></sub>
-      </td>
-      <td align="center">
-        <img src="screenshots/zepp_screenshot_1779287299568.png" width="180" alt="Leitura" /><br/>
-        <sub><b>Leitura</b></sub>
-      </td>
-      <td align="center">
-        <img src="screenshots/zepp_screenshot_1779287295409.png" width="180" alt="Configurações" /><br/>
-        <sub><b>Configurações</b></sub>
-      </td>
-    </tr>
-  </table>
-</div>
+| Lista de livros | Capítulos | Leitura | Configurações |
+|---|---|---|---|
+| ![Lista de livros](screenshots/zepp_screenshot_1779287264515b.png) | ![Capítulos](screenshots/zepp_screenshot_1779287284383.png) | ![Leitura](screenshots/zepp_screenshot_1779287299568.png) | ![Configurações](screenshots/zepp_screenshot_1779287295409.png) |
 
 ---
 
