@@ -80,7 +80,7 @@ Page(
           y: btnY,
           w,
           h,
-          text: `${book.name} ${bookmark.chapterIndex + 1}`,
+          text: `Continuar ${book.name} ${bookmark.chapterIndex + 1}`,
           text_size: textSize,
           color,
           normal_color: bgColor,
@@ -96,7 +96,7 @@ Page(
         const imgW = px(26);
         const imgH = px(38);
         hmUI.createWidget(hmUI.widget.IMG, {
-          x: Math.floor(LAYOUT.W * 0.75),
+          x: Math.floor(LAYOUT.W * 0.8),
           y: btnY - px(6),
           w: imgW,
           h: imgH,
