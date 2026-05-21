@@ -40,7 +40,7 @@ function buildBookButtons(books, onBookClick, startY, bookIndexOffset) {
   const itemStep = h + LAYOUT.pad;
   const xOffset = Math.floor((LAYOUT.W - w) / 2);
 
-  return books.map((book, i) => {
+  const btns = books.map((book, i) => {
     const globalIndex = bookIndexOffset + i;
     const { percent } = getBookProgress(globalIndex, book.chapters);
     const label = percent === 100 ? `${book.name}  ✓` : book.name;
@@ -58,6 +58,16 @@ function buildBookButtons(books, onBookClick, startY, bookIndexOffset) {
       click_func: () => onBookClick(i),
     });
   });
+
+  btns.push(hmUI.createWidget(hmUI.widget.FILL_RECT, {
+    x: 0,
+    y: startY + books.length * itemStep,
+    w: LAYOUT.W,
+    h: LAYOUT.pad * 2,
+    color: bgColor,
+  }));
+
+  return btns;
 }
 
 Page(

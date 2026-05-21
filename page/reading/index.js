@@ -155,7 +155,12 @@ function buildContent(verses, bookIndex, chapterIndex, style) {
       for (let i = 0; i < BATCH_SIZE; i++) renderVerse();
     } else {
       clearInterval(interval);
-      buildNavButtons(chapterIndex, BOOKS[bookIndex].chapters, bookIndex, stack.y + PADDING * 2);
+      const navY = stack.y + PADDING * 2;
+      buildNavButtons(chapterIndex, BOOKS[bookIndex].chapters, bookIndex, navY);
+      const navBtnH = Math.ceil(navFontSize * 2.5);
+      hmUI.createWidget(hmUI.widget.FILL_RECT, {
+        x: 0, y: navY + navBtnH, w: LAYOUT.W, h: LAYOUT.pad * 2, color: bgColor,
+      });
       return;
     }
   }, BATCH_INTERVAL);

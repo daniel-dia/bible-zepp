@@ -88,6 +88,15 @@ Page(
         });
       }
 
+      const lastRow = Math.floor((book.chapters - 1) / cols);
+      hmUI.createWidget(hmUI.widget.FILL_RECT, {
+        x: 0,
+        y: gridStartY + lastRow * (LAYOUT.btnH + PADDING) + h,
+        w: LAYOUT.W,
+        h: LAYOUT.pad * 2,
+        color: bgColor,
+      });
+
       hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR);
     },
   }),

@@ -68,6 +68,9 @@ Page(
           normal_color: DANGER_COLOR, press_color: pressColor, radius,
           click_func: () => this._buildConfirm(),
         }),
+        hmUI.createWidget(hmUI.widget.FILL_RECT, {
+          x: 0, y: y + (LAYOUT.btnH + LAYOUT.pad) * 2 + LAYOUT.btnH, w: LAYOUT.W, h: LAYOUT.pad * 2, color: bgColor,
+        }),
       ];
     },
 
@@ -104,6 +107,9 @@ Page(
           text_size: textSize, color,
           normal_color: bgColor, press_color: pressColor, radius,
           click_func: () => this._buildMain(),
+        }),
+        hmUI.createWidget(hmUI.widget.FILL_RECT, {
+          x: 0, y: y + LAYOUT.btnH, w: LAYOUT.W, h: LAYOUT.pad * 2, color: bgColor,
         }),
       ];
     },
