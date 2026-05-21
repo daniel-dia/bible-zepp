@@ -10,13 +10,14 @@ import {
   TEXT_COLOR_LABELS,
   FONTS,
   FONT_LABELS,
+  MARGINS,
+  MARGIN_LABELS,
   loadSettings,
   saveSettings,
 } from "../../utils/settings";
 
 const { bgColor, pressColor } = COMMON_LAYOUT;
 const SELECTED_COLOR = 0x1565c0;
-const LABEL_COLOR = 0x888888;
 const WHITE = 0xffffff;
 
 function optW4(layout) {
@@ -27,6 +28,10 @@ function optW2(layout) {
   return Math.floor((layout.W - layout.pad * 2 - PADDING) / 2);
 }
 
+function optW3(layout) {
+  return Math.floor((layout.W - layout.pad * 2 - PADDING * 2) / 3);
+}
+
 Page(
   BasePage({
     state: {
@@ -34,9 +39,11 @@ Page(
       sizeBtns: [],
       colorBtns: [],
       fontBtns: [],
+      marginBtns: [],
       sizeY: 0,
       colorY: 0,
       fontY: 0,
+      marginY: 0,
     },
 
     build() {
@@ -56,35 +63,22 @@ Page(
 
       let y = LAYOUT.statusBarH + LAYOUT.headerH + LAYOUT.pad;
 
-      y = this._section(y, "TAMANHO DA LETRA");
       this.state.sizeY = y;
       this.state.sizeBtns = this._buildSizeBtns(y, this.state.settings.fontSizeIndex);
       y += LAYOUT.optBtnH + LAYOUT.pad * 2;
 
-      y = this._section(y, "COR DO TEXTO");
       this.state.colorY = y;
       this.state.colorBtns = this._buildColorBtns(y, this.state.settings.colorIndex);
       y += 2 * (LAYOUT.optBtnH + PADDING) + LAYOUT.pad;
 
-      y = this._section(y, "FONTE");
       this.state.fontY = y;
       this.state.fontBtns = this._buildFontBtns(y, this.state.settings.fontIndex);
+      y += LAYOUT.optBtnH + LAYOUT.pad * 2;
+
+      this.state.marginY = y;
+      this.state.marginBtns = this._buildMarginBtns(y, this.state.settings.marginIndex);
 
       hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR);
-    },
-
-    _section(y, title) {
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        x: LAYOUT.pad,
-        y,
-        w: LAYOUT.W - LAYOUT.pad * 2,
-        h: LAYOUT.labelH,
-        text: title,
-        color: LABEL_COLOR,
-        text_size: hmUI.sp(16),
-        align_v: hmUI.align.CENTER_V,
-      });
-      return y + LAYOUT.labelH;
     },
 
     _buildSizeBtns(y, selected) {
@@ -167,6 +161,32 @@ Page(
       saveSettings(this.state.settings);
       this.state.fontBtns.forEach((btn) => hmUI.deleteWidget(btn));
       this.state.fontBtns = this._buildFontBtns(this.state.fontY, i);
+    },
+
+    _buildMarginBtns(y, selected) {
+      const w = optW3(LAYOUT);
+      return MARGIN_LABELS.map((label, i) =>
+        hmUI.createWidget(hmUI.widget.BUTTON, {
+          x: LAYOUT.pad + i * (w + PADDING),
+          y,
+          w,
+          h: LAYOUT.optBtnH,
+          text: label,
+          text_size: hmUI.sp(20),
+          color: WHITE,
+          normal_color: selected === i ? SELECTED_COLOR : bgColor,
+          press_color: pressColor,
+          radius: PADDING,
+          click_func: () => this._setMarginIndex(i),
+        }),
+      );
+    },
+
+    _setMarginIndex(i) {
+      this.state.settings.marginIndex = i;
+      saveSettings(this.state.settings);
+      this.state.marginBtns.forEach((btn) => hmUI.deleteWidget(btn));
+      this.state.marginBtns = this._buildMarginBtns(this.state.marginY, i);
     },
   }),
 );

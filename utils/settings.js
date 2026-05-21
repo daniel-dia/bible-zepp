@@ -12,7 +12,10 @@ export const TEXT_COLOR_LABELS = ["Branco", "Creme", "Amarelo", "Azul"];
 export const FONTS = [null, "fonts/Nunito-Light.ttf"];
 export const FONT_LABELS = ["Normal", "Light"];
 
-const DEFAULTS = { fontSizeIndex: 1, colorIndex: 0, fontIndex: 1 };
+export const MARGINS = [px(8), px(16), px(28)];
+export const MARGIN_LABELS = ["S", "N", "G"];
+
+const DEFAULTS = { fontSizeIndex: 1, colorIndex: 0, fontIndex: 1, marginIndex: 1 };
 
 export function loadSettings() {
   return { ...DEFAULTS, ...(localStorage.getItem(KEY) || {}) };

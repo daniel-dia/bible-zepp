@@ -5,7 +5,7 @@ import { BOOKS } from "../../utils/bible-meta";
 import { readChapter } from "../../utils/fs-helper";
 import { saveBookmark } from "../../utils/bookmark";
 import { markChapterRead } from "../../utils/progress";
-import { loadSettings, FONT_SIZES, TEXT_COLORS, FONTS } from "../../utils/settings";
+import { loadSettings, FONT_SIZES, TEXT_COLORS, FONTS, MARGINS } from "../../utils/settings";
 import { LAYOUT } from "zosLoader:./index.[pf].layout.js";
 import { vstack, PADDING } from "../../utils/vstack";
 import { COMMON_LAYOUT } from "../../utils/config/layout";
@@ -34,31 +34,16 @@ function buildHeader(bookName, chapterIndex) {
   });
 
   hmUI.createWidget(hmUI.widget.BUTTON, {
-    x: LAYOUT.W - ICON_W,
+    x: LAYOUT.W - ICON_W - PADDING,
     y: 0,
     w: ICON_W,
     h: LAYOUT.headerH,
     text: "⚙",
     text_size: hmUI.sp(20),
-    normal_color: 0x222222,
+    // normal_color: 0x222222,
     press_color: bgColor,
     radius: PADDING,
     click_func: () => push({ url: "page/settings/index" }),
-  });
-}
-
-function buildLoading(style) {
-  return hmUI.createWidget(hmUI.widget.TEXT, {
-    x: 0,
-    y: LAYOUT.headerH,
-    w: LAYOUT.W,
-    h: PADDING * 6,
-    text: "Carregando...",
-    color: style.color,
-    text_size: style.fontSize,
-    ...(style.font ? { font: style.font } : {}),
-    align_h: hmUI.align.CENTER_H,
-    align_v: hmUI.align.CENTER_V,
   });
 }
 
@@ -126,32 +111,54 @@ function buildNavButtons(chapterIndex, chaptersLength, bookIndex, startY) {
   }
 }
 
+const BATCH_SIZE = 3;
+const BATCH_INTERVAL = 500;
+
 function buildContent(verses, bookIndex, chapterIndex, style) {
-  const textW = LAYOUT.W - LAYOUT.pad * 2;
+  const margin = style.margin;
+  const text_width = LAYOUT.W - margin * 2;
   const fontProp = style.font ? { font: style.font } : {};
   const stack = vstack(LAYOUT.headerH + PADDING, PADDING);
+  const text_size = style.fontSize;
 
-  verses.forEach((verse) => {
-    const { height } = hmUI.getTextLayout(verse, {
-      text_size: style.fontSize,
-      text_width: textW,
-    });
+  let currentIndex = 0;
+
+  function renderVerse() {
+    if (currentIndex >= verses.length) return;
+    const verse = verses[currentIndex];
+    const { height } = hmUI.getTextLayout(verse, { text_size, text_width });
+
     const y = stack.add(height + PADDING);
+
     hmUI.createWidget(hmUI.widget.TEXT, {
-      x: LAYOUT.pad,
       y,
-      w: textW,
+      x: margin,
+      w: text_width,
       h: height,
+      text_size,
       text: verse,
       color: style.color,
-      text_size: style.fontSize,
-      ...fontProp,
       text_style: hmUI.text_style.WRAP,
       align_v: hmUI.align.TOP,
+      ...fontProp,
     });
-  });
 
-  buildNavButtons(chapterIndex, BOOKS[bookIndex].chapters, bookIndex, stack.y + PADDING * 2);
+    currentIndex++;
+  }
+
+  // Primeiros 5 imediatamente
+  for (let i = 0; i < BATCH_SIZE; i++) renderVerse();
+
+  // A cada 1s, renderiza mais 5
+  const interval = setInterval(() => {
+    if (currentIndex < verses.length) {
+      for (let i = 0; i < BATCH_SIZE; i++) renderVerse();
+    } else {
+      clearInterval(interval);
+      buildNavButtons(chapterIndex, BOOKS[bookIndex].chapters, bookIndex, stack.y + PADDING * 2);
+      return;
+    }
+  }, BATCH_INTERVAL);
 }
 
 Page(
@@ -178,22 +185,13 @@ Page(
         fontSize: FONT_SIZES[cfg.fontSizeIndex],
         color: TEXT_COLORS[cfg.colorIndex],
         font: FONTS[cfg.fontIndex],
+        margin: MARGINS[cfg.marginIndex],
       };
+      const verses = readChapter(bookIndex, chapterIndex);
 
       buildHeader(BOOKS[bookIndex].name, chapterIndex);
-      const loading = buildLoading(style);
 
-      setTimeout(() => {
-        hmUI.deleteWidget(loading);
-
-        const verses = readChapter(bookIndex, chapterIndex);
-        if (!verses) {
-          buildError();
-          return;
-        }
-
-        buildContent(verses, bookIndex, chapterIndex, style);
-      }, 50);
+      buildContent(verses, bookIndex, chapterIndex, style);
     },
   }),
 );

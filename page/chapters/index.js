@@ -21,14 +21,6 @@ Page(
     },
 
     build() {
-      this._buildPage();
-    },
-
-    onResume() {
-      this._refreshChapterColors();
-    },
-
-    _buildPage() {
       const bookIndex = this.state.bookIndex;
       const book = BOOKS[bookIndex];
 
@@ -54,7 +46,7 @@ Page(
         text: "⚙",
         text_size: hmUI.sp(22),
         color,
-        normal_color: bgColor,
+        // normal_color: bgColor,
         press_color: pressColor,
         radius: PADDING,
         click_func: () =>
@@ -66,10 +58,11 @@ Page(
 
       // Chapter grid
       const cols = LAYOUT.cols;
-      const btnW = Math.floor(LAYOUT.W / cols);
+      const btnW = Math.floor((LAYOUT.W - PADDING) / cols);
       const gridStartY = headerY + LAYOUT.headerH + PADDING;
+      const w = btnW - PADDING;
+      const h = btnW - PADDING;
 
-      this.chapterBtns = [];
       for (let i = 0; i < book.chapters; i++) {
         const col = i % cols;
         const row = Math.floor(i / cols);
@@ -77,10 +70,10 @@ Page(
         const isRead = isChapterRead(bookIndex, idx);
 
         const btn = hmUI.createWidget(hmUI.widget.BUTTON, {
+          w,
+          h,
           x: col * btnW + PADDING,
           y: gridStartY + row * (LAYOUT.btnH + PADDING),
-          w: btnW - PADDING * 2,
-          h: LAYOUT.btnH,
           text: `${i + 1}`,
           normal_color: isRead ? READ_COLOR : bgColor,
           press_color: pressColor,
@@ -93,19 +86,9 @@ Page(
             });
           },
         });
-        this.chapterBtns.push(btn);
       }
 
       hmUI.createWidget(hmUI.widget.PAGE_SCROLLBAR);
-    },
-
-    _refreshChapterColors() {
-      if (!this.chapterBtns) return;
-      const bookIndex = this.state.bookIndex;
-      this.chapterBtns.forEach((btn, i) => {
-        const isRead = isChapterRead(bookIndex, i);
-        btn.setProperty(hmUI.prop.MORE, { normal_color: isRead ? READ_COLOR : bgColor });
-      });
     },
   }),
 );
