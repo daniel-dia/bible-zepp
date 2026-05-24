@@ -26,7 +26,7 @@
 ## Screenshots
 
 
-| Lista de livros | Capítulos | Leitura | Configurações |
+|  |  |  |  |
 |---|---|---|---|
 | ![Lista de livros](screenshots/zepp_screenshot_1779287264515b.png) | ![Capítulos](screenshots/zepp_screenshot_1779287284383.png) | ![Leitura](screenshots/zepp_screenshot_1779287299568.png) | ![Configurações](screenshots/zepp_screenshot_1779287295409.png) |
 
